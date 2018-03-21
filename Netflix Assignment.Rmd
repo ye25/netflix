@@ -1,7 +1,7 @@
 ---
-title: "Netflix Assignment"
+title: "Netflix Assignment - Marketing Analytics HW7"
 author: "Grace(Ya) You, Ina(Mengyuan) Ye"
-date: "March 21, 2018"
+Due date: "March 23, 2018"
 output: word_document
 ---
 
@@ -73,66 +73,59 @@ print(colMeans(rockyDB_valid4[,2:6],na.rm = TRUE))
 
 ```
 
-Part 2: Data Exploration and Missing Data (40 marks)
-a) Compare the correlations between the ratings of each of the five movies using the cor
-command on your new data frame. Which movies are most similar? Which movie is
-most different from the others? Put the matrix of correlations and your response in the
-document. (5 for correct matrix, 5 marks for discussion)
-Hint: This should just be one call of cor. Set the ‘use’ option in the cor function to
-pairwise if you get NA as a response
 
-b) Find the mean rating of each movie. Which is the best? Which is the worst? Answer in
-the document. (5 marks)
-Hint: You can use mean, or the colMeans function. Be aware of the na.rm option in
-both.
-c) Create a subset of your data frame that only contains consumers who rated Rocky 4.
-Find the mean rating of each movie in the data set. Compare with the results of the
-previous section. Why do you think the mean ratings changed? Answer in the
-document. (5 marks).
-Hint: Look at the is.na function
-d) Why are some movies missing? What kind of bias might be caused by omitting
-incomplete data? Create a subset of your data by omitting all the NA observations (call
-this dataset “rockyDB_noNA”). Report the bias in the mean ratings from this subsetted
-data. Hint: Look at the na.omit function (5 marks).
-e) Some missing data analysis instead build a statistical model based on the complete
-observations to ‘fill in’ the missing values. Why might the data still be biased after this
+d) Why are some movies missing? What kind of bias might be caused by omitting incomplete data? Create a subset of your data by omitting all the NA observations (call this dataset “rockyDB_noNA”). Report the bias in the mean ratings from this subsetted data. Hint: Look at the na.omit function (5 marks).
+```{r}
+```
+
+e) Some missing data analysis instead build a statistical model based on the complete observations to ‘fill in’ the missing values. Why might the data still be biased after this
 procedure? (5 marks for discussion)
-f) Create a subset of your data by omitting NA observations in the “Rocky5” variable. For
-this subsetted dataset, create variables to denote whether ratings for “Rocky1”,..,
-“Rocky4” are missing (call these “isMissing1”, …, “isMissing4”). Check whether having
-missing ratings in “Rocky1”,…, “Rocky4” is correlated with ratings for “Rocky5”. Describe
-the missing data strategies if there is no statistically significant correlation, and if there is.
-Implement these strategies in your data, and create the final dataset (call this
-“rockyDB_impute”). (10 marks)
+
+```{r}
+```
+
+f) Create a subset of your data by omitting NA observations in the “Rocky5” variable. For this subsetted dataset, create variables to denote whether ratings for “Rocky1”,.., “Rocky4” are missing (call these “isMissing1”, …, “isMissing4”). Check whether having missing ratings in “Rocky1”,…, “Rocky4” is correlated with ratings for “Rocky5”. Describe the missing data strategies if there is no statistically significant correlation, and if there is. Implement these strategies in your data, and create the final dataset (call this “rockyDB_impute”). (10 marks)
+
+```{r}
+```
+
+
 Part 3: Predictive Modelling (40 marks)
-Here we will try to determine whether Rocky 5 should be recommended to Netflix customers,
-based on their ratings of Rocky 1 through 4. The dependent variables is the rating of Rocky 5,
-and the independent variables are the ratings of the previous 4 Rocky movies. Treat the rating
-of Rocky 5 as a continuous variable (rather than a categorical variable). 
-a) For the “rockyDB_noNA” data (with all complete observations), estimate and store a
-simple linear regression between the given dependent variable and the independent
-variables (Rocky5 ~ Rocky1 + Rocky2 + Rocky3 + Rocky4) (5 marks)
-b) For the “rockyDB_impute” data (with all complete observations), estimate and store a
-simple linear regression between the given dependent variable and the independent
-variables (Rocky5 ~ Rocky1 + Rocky2 + Rocky3 + Rocky4). Compare the regression
-coefficients between the two models. (5 marks)
-c) To the regression model in part (b) above, add the variables for “isMissing2”,
-“isMissing3”, “isMissing4”. Does adding these variables improve the R-squared? What
-about the adjusted R-squared? (5 marks)
-d) Write code that estimates at least 20 statistical models with these predictor variables
-using the “rockyDB_impute” data. (15 marks) Hint: You can manually or automatically
-generate a set of formulas, and then use those formulas in for different estimation
-procedures. For example, you can use transformations of the predictor variables
-(polynomials, log, interactions, treating them as categorical etc.). Below is some code
-that will automatically generate 4 formulas, you can expand it to estimate more models,
-or you can write the models down manually)
+
+Here we will try to determine whether Rocky 5 should be recommended to Netflix customers, based on their ratings of Rocky 1 through 4. The dependent variables is the rating of Rocky 5, and the independent variables are the ratings of the previous 4 Rocky movies. Treat the rating of Rocky 5 as a continuous variable (rather than a categorical variable). 
+
+a) For the “rockyDB_noNA” data (with all complete observations), estimate and store a simple linear regression between the given dependent variable and the independent variables (Rocky5 ~ Rocky1 + Rocky2 + Rocky3 + Rocky4) (5 marks)
+```{r}
+```
+
+
+b) For the “rockyDB_impute” data (with all complete observations), estimate and store a simple linear regression between the given dependent variable and the independent variables (Rocky5 ~ Rocky1 + Rocky2 + Rocky3 + Rocky4). Compare the regression coefficients between the two models. (5 marks)
+
+```{r}
+```
+
+c) To the regression model in part (b) above, add the variables for “isMissing2”, “isMissing3”, “isMissing4”. Does adding these variables improve the R-squared? What about the adjusted R-squared? (5 marks)
+```{r}
+```
+
+
+d) Write code that estimates at least 20 statistical models with these predictor variables using the “rockyDB_impute” data. (15 marks) Hint: You can manually or automatically
+generate a set of formulas, and then use those formulas in for different estimation procedures. For example, you can use transformations of the predictor variables (polynomials, log, interactions, treating them as categorical etc.). Below is some code that will automatically generate 4 formulas, you can expand it to estimate more models, or you can write the models down manually)
+
 rocky1Vec = c('','+Rocky1','+poly(Rocky1,2)')
 rocky2Vec = c('','+Rocky2','+poly(Rocky2,2)')
 formulaSet = paste('Rocky5~1',
 apply(expand.grid(rocky1Vec,rocky2Vec),1,paste,collapse=''))
 lm(as.formula(formulaSet[1]),data=rockyDB_impute)
-e) Split the dataset into a 80:20 training and validation set. Use these data sets to estimate
-and then evaluate the out-of-sample MSE of each model in part d. Report the table of
-out-of-sample MSEs for these models. (5 marks).
-f) Find the model performs best in terms of out-of-sample MSE, and present the model in
-the document, and discuss the results. (5 marks)
+
+```{r}
+```
+
+
+e) Split the dataset into a 80:20 training and validation set. Use these data sets to estimate and then evaluate the out-of-sample MSE of each model in part d. Report the table of out-of-sample MSEs for these models. (5 marks).
+```{r}
+```
+
+f) Find the model performs best in terms of out-of-sample MSE, and present the model in the document, and discuss the results. (5 marks)
+```{r}
+```
