@@ -89,28 +89,48 @@ colMeans(rockyDB_noNA[,2:6])
 *Compare to the mean value with only removing the NA values, we can see that the average ratings for all five movies have increased. This supports the bias mentioned above, that lower scores were omitted while those could potentially given by movie lovers that are experts in specific fields.
 
 
-+e) Some missing data analysis instead build a statistical model based on the complete observations to ‘fill in’ the missing values. Why might the data still be biased after this
-procedure? (5 marks for discussion)
++e) Some missing data analysis instead build a statistical model based on the complete observations to ‘fill in’ the missing values. Why might the data still be biased after this procedure? (5 marks for discussion)
 
-```{r}
-```
+*The reason that there will still be biased after filling in the missing values with some model is that, the movies that have moissing ratings could be types that the viewers are not interested in or not familiar in. Thus, the ratings would be relatively hard to predict with the ratings of movies they favored, which also explained the biased in this strategy.
 
 +f) Create a subset of your data by omitting NA observations in the “Rocky5” variable. For this subsetted dataset, create variables to denote whether ratings for “Rocky1”,.., “Rocky4” are missing (call these “isMissing1”, …, “isMissing4”). Check whether having missing ratings in “Rocky1”,…, “Rocky4” is correlated with ratings for “Rocky5”. Describe the missing data strategies if there is no statistically significant correlation, and if there is. Implement these strategies in your data, and create the final dataset (call this “rockyDB_impute”). (10 marks)
 
 ```{r}
 rockyDB_noNA5 <- subset(rockyDB, !is.na(rocky5))
+rockyDB_noNA5$isMissing1 <- ifelse(is.na(rockyDB_noNA5$rocky1),0,1)
+rockyDB_noNA5$isMissing2 <- ifelse(is.na(rockyDB_noNA5$rocky2),0,1)
+rockyDB_noNA5$isMissing3 <- ifelse(is.na(rockyDB_noNA5$rocky3),0,1)
+rockyDB_noNA5$isMissing4 <- ifelse(is.na(rockyDB_noNA5$rocky4),0,1)
 
-rockyDB_noNA5$rocky1[is.na(rockyDB_noNA5$rocky1)] <- "isMissing1"
-rockyDB_noNA5$rocky2[is.na(rockyDB_noNA5$rocky2)] <- "isMissing2"
-rockyDB_noNA5$rocky3[is.na(rockyDB_noNA5$rocky3)] <- "isMissing3"
-rockyDB_noNA5$rocky4[is.na(rockyDB_noNA5$rocky4)] <- "isMissing4"
-
-missing5v1 <- rockyDB_noNA5[which(rockyDB_noNA5$rocky1=="isMissing1"),]
-missing5v2 <- rockyDB_noNA5[which(rockyDB_noNA5$rocky2=="isMissing2"),]
-missing5v3 <- rockyDB_noNA5[which(rockyDB_noNA5$rocky3=="isMissing3"),]
-missing5v4 <- rockyDB_noNA5[which(rockyDB_noNA5$rocky4=="isMissing4"),]
+rockyDB_noNA5_cor <- subset(rockyDB_noNA5,select=-c(1:5))
 
 
+cor_noNA5 <- cor(rockyDB_noNA5_cor,use="complete.obs")
+
+
+corrplot::corrplot.mixed(corr=cor_noNA5,tl.pos="lt")
+cor(rockyDB_noNA5_cor)
+
+library(Hmisc)
+rcorr(as.matrix(rockyDB_noNA5_cor))
+
+cor.test(rockyDB_noNA5_cor$rocky5,rockyDB_noNA5_cor$isMissing1,method="pearson")
+cor.test(rockyDB_noNA5_cor$rocky5,rockyDB_noNA5_cor$isMissing2,method="pearson")
+cor.test(rockyDB_noNA5_cor$rocky5,rockyDB_noNA5_cor$isMissing3,method="pearson")
+cor.test(rockyDB_noNA5_cor$rocky5,rockyDB_noNA5_cor$isMissing4,method="pearson")
+
+
+#234 correlated 1 uncorrelated
+
+rockyDB_impute <- subset(rockyDB,!is.na(rocky1))
+rockyDB_impute <- subset(rockyDB_impute,!is.na(rocky5))
+means_impute <- as.matrix(colMeans(rockyDB_impute,na.rm=TRUE))
+
+rockyDB_impute$rockyy2 <- ifelse(is.na(rockyDB_impute$rocky2),mean(rockyDB$rocky2,na.rm=TRUE),rockyDB_impute$rocky2)
+rockyDB_impute$rockyy3 <- ifelse(is.na(rockyDB_impute$rocky3),mean(rockyDB$rocky3,na.rm=TRUE),rockyDB_impute$rocky3)
+rockyDB_impute$rockyy4 <- ifelse(is.na(rockyDB_impute$rocky4),mean(rockyDB$rocky4,na.rm=TRUE),rockyDB_impute$rocky4)
+
+rockyDB_impute <- subset(rockyDB_impute,select=c(2,6:9))
 
 ```
 
@@ -121,6 +141,8 @@ Here we will try to determine whether Rocky 5 should be recommended to Netflix c
 
 a) For the “rockyDB_noNA” data (with all complete observations), estimate and store a simple linear regression between the given dependent variable and the independent variables (Rocky5 ~ Rocky1 + Rocky2 + Rocky3 + Rocky4) (5 marks)
 ```{r}
+lm_noNA<-lm(rocky5 ~ rocky1 + rocky2 + rocky3 + rocky4,data=rockyDB_noNA)
+
 ```
 
 
