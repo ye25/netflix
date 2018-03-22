@@ -10,14 +10,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-PART 1: Data Management
-1)  Load the rating data into R and save as a data frame. Rename the columns "1",..,"5" as "Rocky1",.,"Rocky5"
+##PART 1: Data Management
++1)  Load the rating data into R and save as a data frame. Rename the columns "1",..,"5" as "Rocky1",.,"Rocky5"
 
 ```{r}
 
 
 library(readr)
-rockyDB <- read_csv("C:/Users/lnaye/Desktop/R/Marketing Analytics/rockyDB.csv")
+rockyDB <- read_csv("rockyDB.csv")
 
 names(rockyDB)[2] <- "rocky1"
 names(rockyDB)[3] <- "rocky2"
@@ -28,21 +28,19 @@ names(rockyDB)[6] <- "rocky5"
 ```
 
 
-b) The problem with 0 values is that when comparing the ratings for each movie. The algorithm of calculating mean, median, and even standard deviation would consider 0 as the lowest rating instead of NA value. For example, suppose rocky5 is a unpopular but highly-rated movie, putting 0 instead of null will misrepresent rocky5 to be low rated movie. 
++b) The data contains ‘0’ values. This was used as a default rating for the case where consumers didn’t rate that particular Rocky movie. Why would representing missing values with ‘0’ cause problems for future analysis? (5 marks)
 
-c) Replace 0 with NA
+*The problem with 0 values is that when comparing the ratings for each movie. The algorithm of calculating mean, median, and even standard deviation would consider 0 as the lowest rating instead of NA value. For example, suppose rocky5 is a unpopular but highly-rated movie, putting 0 instead of null will misrepresent rocky5 to be low rated movie. 
+
++c) Replace 0 with NA
 ```{r}
 rockyDB[rockyDB==0] <- NA
 ```
 
 
+##PART 2: Data Exploration and Missing Data
 
-PART 2: Data Exploration and Missing Data
-
-a) Compare the correlations between the ratings of each of the five movies using the cor command on your new data frame. Which movies are most similar? Which movie is most different from the others? Put the matrix of correlations and your response in the
-document. 
-
-Rocky3 and Rock2 are most similar with each orthers. Rocky1 is most differenct than others because its average correlation with others is the lowest across all five movies. 
++a) Compare the correlations between the ratings of each of the five movies using the cor command on your new data frame. Which movies are most similar? Which movie is most different from the others? Put the matrix of correlations and your response in the document. 
 
 ```{r}
 library(corrplot)
@@ -53,19 +51,19 @@ cor <- cor(rockyDB_corr,use="complete.obs")
 
 corrplot::corrplot.mixed(corr=cor,tl.pos="lt")
 
-
 ```
+*We can see from the graph above that Rocky3 and Rock2 are most similar with each orthers, with 0.75 correlation. Rocky1 is most differenct than others because its average correlation with others is the lowest across all five movies. 
 
-
-b) Find the mean rating of each movie. Which is the best? Which is the worst? Answer in the document
++b) Find the mean rating of each movie. Which is the best? Which is the worst? Answer in the document.
 ```{r}
 means <- colMeans(rockyDB[,2:6],na.rm = TRUE)
 print(round(means,digit=4))
 
 ```
+*From the table above we can conclude that the rocky1 is the best with average rate of 3.77 and rock 5 has the lowest average rate at 3.03.
 
-c)Create a subset of your data frame that only contains consumers who rated Rocky 4. Find the mean rating of each movie in the data set. Compare with the results of the previous section. Why do you think the mean ratings changed? Answer in the
-document.
+
+c)Create a subset of your data frame that only contains consumers who rated Rocky 4. Find the mean rating of each movie in the data set. Compare with the results of the previous section. Why do you think the mean ratings changed? Answer in the document.
 ```{r}
 
 rockyDB_valid4 <- subset(rockyDB, !is.na(rocky4))
@@ -75,12 +73,9 @@ print(colMeans(rockyDB_valid4[,2:6],na.rm = TRUE))
 
 
 ```
+*Within the subset group who rated rocky4, while the overall rank of the ratings in these 5 moives are the same, the average ratings for the other four movies are all higher. This could be that the people who watched rocky4 will tend to be more interested in the other four moives or the rocky4 movie audiences are less critical in moive rating.
 
-
-d) Why are some movies missing? What kind of bias might be caused by omitting
-incomplete data? Create a subset of your data by omitting all the NA observations (call
-this dataset “rockyDB_noNA”). Report the bias in the mean ratings from this subsetted
-data. Hint: Look at the na.omit function
+d) Why are some movies missing? What kind of bias might be caused by omitting incomplete data? Create a subset of your data by omitting all the NA observations (call this dataset “rockyDB_noNA”). Report the bias in the mean ratings from this subsetted data. Hint: Look at the na.omit function
 
 ```{r}
 
@@ -90,6 +85,8 @@ rockyDB_noNA <- na.omit(rockyDB)
 colMeans(rockyDB_noNA[,2:6])
 
 ```
+*Some movies missing is because some viewers might not watch all the 5 movies - they could be only interested in some type of the movies (as we shown in the correlation graph earlier, the types of these five movies are varies). By omitting the incomplete dataset, we will have less rating records for those who are interested in this specific type of movie (could be expert in the field, or could provide more insights and more critical in grading the movie - thus relatively lower scores),
+*Compare to the mean value with only removing the NA values, we can see that the average ratings for all five movies have increased. This supports the bias mentioned above, that lower scores were omitted while those could potentially given by movie lovers that are experts in specific fields.
 
 
 e) Some missing data analysis instead build a statistical model based on the complete observations to ‘fill in’ the missing values. Why might the data still be biased after this
