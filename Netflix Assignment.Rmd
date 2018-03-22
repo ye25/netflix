@@ -63,7 +63,7 @@ print(round(means,digit=4))
 *From the table above we can conclude that the rocky1 is the best with average rate of 3.77 and rock 5 has the lowest average rate at 3.03.
 
 
-c)Create a subset of your data frame that only contains consumers who rated Rocky 4. Find the mean rating of each movie in the data set. Compare with the results of the previous section. Why do you think the mean ratings changed? Answer in the document.
++c)Create a subset of your data frame that only contains consumers who rated Rocky 4. Find the mean rating of each movie in the data set. Compare with the results of the previous section. Why do you think the mean ratings changed? Answer in the document.
 ```{r}
 
 rockyDB_valid4 <- subset(rockyDB, !is.na(rocky4))
@@ -75,7 +75,7 @@ print(colMeans(rockyDB_valid4[,2:6],na.rm = TRUE))
 ```
 *Within the subset group who rated rocky4, while the overall rank of the ratings in these 5 moives are the same, the average ratings for the other four movies are all higher. This could be that the people who watched rocky4 will tend to be more interested in the other four moives or the rocky4 movie audiences are less critical in moive rating.
 
-d) Why are some movies missing? What kind of bias might be caused by omitting incomplete data? Create a subset of your data by omitting all the NA observations (call this dataset “rockyDB_noNA”). Report the bias in the mean ratings from this subsetted data. Hint: Look at the na.omit function
++d) Why are some movies missing? What kind of bias might be caused by omitting incomplete data? Create a subset of your data by omitting all the NA observations (call this dataset “rockyDB_noNA”). Report the bias in the mean ratings from this subsetted data. Hint: Look at the na.omit function
 
 ```{r}
 
@@ -89,19 +89,33 @@ colMeans(rockyDB_noNA[,2:6])
 *Compare to the mean value with only removing the NA values, we can see that the average ratings for all five movies have increased. This supports the bias mentioned above, that lower scores were omitted while those could potentially given by movie lovers that are experts in specific fields.
 
 
-e) Some missing data analysis instead build a statistical model based on the complete observations to ‘fill in’ the missing values. Why might the data still be biased after this
++e) Some missing data analysis instead build a statistical model based on the complete observations to ‘fill in’ the missing values. Why might the data still be biased after this
 procedure? (5 marks for discussion)
 
 ```{r}
 ```
 
-f) Create a subset of your data by omitting NA observations in the “Rocky5” variable. For this subsetted dataset, create variables to denote whether ratings for “Rocky1”,.., “Rocky4” are missing (call these “isMissing1”, …, “isMissing4”). Check whether having missing ratings in “Rocky1”,…, “Rocky4” is correlated with ratings for “Rocky5”. Describe the missing data strategies if there is no statistically significant correlation, and if there is. Implement these strategies in your data, and create the final dataset (call this “rockyDB_impute”). (10 marks)
++f) Create a subset of your data by omitting NA observations in the “Rocky5” variable. For this subsetted dataset, create variables to denote whether ratings for “Rocky1”,.., “Rocky4” are missing (call these “isMissing1”, …, “isMissing4”). Check whether having missing ratings in “Rocky1”,…, “Rocky4” is correlated with ratings for “Rocky5”. Describe the missing data strategies if there is no statistically significant correlation, and if there is. Implement these strategies in your data, and create the final dataset (call this “rockyDB_impute”). (10 marks)
 
 ```{r}
+rockyDB_noNA5 <- subset(rockyDB, !is.na(rocky5))
+
+rockyDB_noNA5$rocky1[is.na(rockyDB_noNA5$rocky1)] <- "isMissing1"
+rockyDB_noNA5$rocky2[is.na(rockyDB_noNA5$rocky2)] <- "isMissing2"
+rockyDB_noNA5$rocky3[is.na(rockyDB_noNA5$rocky3)] <- "isMissing3"
+rockyDB_noNA5$rocky4[is.na(rockyDB_noNA5$rocky4)] <- "isMissing4"
+
+missing5v1 <- rockyDB_noNA5[which(rockyDB_noNA5$rocky1=="isMissing1"),]
+missing5v2 <- rockyDB_noNA5[which(rockyDB_noNA5$rocky2=="isMissing2"),]
+missing5v3 <- rockyDB_noNA5[which(rockyDB_noNA5$rocky3=="isMissing3"),]
+missing5v4 <- rockyDB_noNA5[which(rockyDB_noNA5$rocky4=="isMissing4"),]
+
+
+
 ```
 
 
-Part 3: Predictive Modelling (40 marks)
+##Part 3: Predictive Modelling (40 marks)
 
 Here we will try to determine whether Rocky 5 should be recommended to Netflix customers, based on their ratings of Rocky 1 through 4. The dependent variables is the rating of Rocky 5, and the independent variables are the ratings of the previous 4 Rocky movies. Treat the rating of Rocky 5 as a continuous variable (rather than a categorical variable). 
 
