@@ -132,6 +132,9 @@ rockyDB_impute$rockyy4 <- ifelse(is.na(rockyDB_impute$rocky4),mean(rockyDB$rocky
 
 rockyDB_impute <- subset(rockyDB_impute,select=c(2,6:9))
 
+names(rockyDB_impute)[3] <- "rocky2"
+names(rockyDB_impute)[4] <- "rocky3"
+names(rockyDB_impute)[5] <- "rocky4"
 ```
 
 
@@ -142,6 +145,7 @@ Here we will try to determine whether Rocky 5 should be recommended to Netflix c
 a) For the “rockyDB_noNA” data (with all complete observations), estimate and store a simple linear regression between the given dependent variable and the independent variables (Rocky5 ~ Rocky1 + Rocky2 + Rocky3 + Rocky4) (5 marks)
 ```{r}
 lm_noNA<-lm(rocky5 ~ rocky1 + rocky2 + rocky3 + rocky4,data=rockyDB_noNA)
+summary(lm_noNA)
 
 ```
 
@@ -149,7 +153,10 @@ lm_noNA<-lm(rocky5 ~ rocky1 + rocky2 + rocky3 + rocky4,data=rockyDB_noNA)
 b) For the “rockyDB_impute” data (with all complete observations), estimate and store a simple linear regression between the given dependent variable and the independent variables (Rocky5 ~ Rocky1 + Rocky2 + Rocky3 + Rocky4). Compare the regression coefficients between the two models. (5 marks)
 
 ```{r}
+lm_impute<-lm(rocky5 ~ rocky1 + rocky2 + rocky3 + rocky4,data=rockyDB_impute)
+summary(lm_impute)
 ```
+
 
 c) To the regression model in part (b) above, add the variables for “isMissing2”, “isMissing3”, “isMissing4”. Does adding these variables improve the R-squared? What about the adjusted R-squared? (5 marks)
 ```{r}
