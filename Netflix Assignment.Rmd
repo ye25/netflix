@@ -160,6 +160,14 @@ summary(lm_impute)
 
 c) To the regression model in part (b) above, add the variables for “isMissing2”, “isMissing3”, “isMissing4”. Does adding these variables improve the R-squared? What about the adjusted R-squared? (5 marks)
 ```{r}
+
+rockyDB_noNA5 <-subset(rockyDB_noNA5,!is.na(rockyDB_noNA5$rocky1))
+rockyDB_impute$isMissing2 <- rockyDB_noNA5$isMissing2
+rockyDB_impute$isMissing3 <- rockyDB_noNA5$isMissing3
+rockyDB_impute$isMissing4 <- rockyDB_noNA5$isMissing4
+
+lm_add_missing <- lm(rocky5~.,data=rockyDB_impute)
+summary(lm_add_missing)
 ```
 
 
@@ -173,6 +181,20 @@ apply(expand.grid(rocky1Vec,rocky2Vec),1,paste,collapse=''))
 lm(as.formula(formulaSet[1]),data=rockyDB_impute)
 
 ```{r}
+a <- lm(rocky5~rocky1,data=rockyDB_impute)
+b <- lm(rocky5~rocky1+rocky2+rocky3+rocky4,data=rockyDB_impute)
+c <- lm(rocky5~rocky1+rocky2+rocky3,data=rockyDB_impute)
+d <- lm(rocky5~rocky1+rocky2,data=rockyDB_impute)
+e <- lm(rocky5~rocky1+isMissing2+isMissing3+isMissing4,data=rockyDB_impute)
+f <- lm(rocky5~rocky1+rocky2*isMissing2+rocky3+rocky4,data=rockyDB_impute)
+g <- lm(rocky5~rocky1+rocky2+rocky3*isMissing3+rocky4,data=rockyDB_impute)
+h <- lm(rocky5~rocky1+rocky2+rocky3+rocky4*isMissing4,data=rockyDB_impute)
+i <- lm(rocky5~rocky1+rocky2*isMissing2+rocky3*isMissing3+rocky4,data=rockyDB_impute)
+j <- lm(rocky5~rocky1+rocky2&isMissing2+rocky3+rocky4*isMissing4,data=rockyDB_impute)
+k <- lm(rocky5~rocky1+rocky2+rocky3+rocky4,data=rockyDB_impute)
+
+
+
 
 ```
 
