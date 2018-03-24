@@ -192,6 +192,18 @@ h <- lm(rocky5~rocky1+rocky2+rocky3+rocky4*isMissing4,data=rockyDB_impute)
 i <- lm(rocky5~rocky1+rocky2*isMissing2+rocky3*isMissing3+rocky4,data=rockyDB_impute)
 j <- lm(rocky5~rocky1+rocky2&isMissing2+rocky3+rocky4*isMissing4,data=rockyDB_impute)
 k <- lm(rocky5~rocky1+rocky2+rocky3+rocky4,data=rockyDB_impute)
+l <- lm(rocky5~rocky1+rocky2*rocky3+rocky4,data=rockyDB_impute)
+m <- lm(rocky5~rocky1+rocky2+rocky3*rocky4,data=rockyDB_impute)
+n <- lm(log(rocky5)~rocky1+rocky2+rocky3+rocky4,data=rockyDB_impute)
+o <- lm(log(rocky5)~log(rocky1)+rocky2+rocky3+rocky4,data=rockyDB_impute)
+p <- lm(rocky5~rocky1^2+rocky2*isMissing2+rocky3+rocky4,data=rockyDB_impute)
+q <- lm(rocky5~rocky1^2+rocky2*isMissing2+rocky3*isMissing3+rocky4,data=rockyDB_impute)
+r <- lm(rocky5~rocky1+rocky2*rocky3+rocky4*isMissing4,data=rockyDB_impute)
+s <- lm(rocky5~isMissing2+isMissing3+isMissing4,data=rockyDB_impute)
+t <- lm(rocky5~rocky1+rocky2+rocky3*isMissing3,data=rockyDB_impute)
+
+
+
 
 
 
@@ -201,8 +213,97 @@ k <- lm(rocky5~rocky1+rocky2+rocky3+rocky4,data=rockyDB_impute)
 
 e) Split the dataset into a 80:20 training and validation set. Use these data sets to estimate and then evaluate the out-of-sample MSE of each model in part d. Report the table of out-of-sample MSEs for these models. (5 marks).
 ```{r}
+
+library(rpart)
+library(rpart.plot)
+# partition
+set.seed(1)  
+train.index <- sample(c(1:dim(rockyDB_impute)[1]), dim(rockyDB_impute)[1]*0.8)  
+train.df <- rockyDB_impute[train.index, ]
+valid.df <- rockyDB_impute[-train.index, ]
+
+t_a <- lm(rocky5~rocky1,data=train.df)
+t_b <- lm(rocky5~rocky1+rocky2+rocky3+rocky4,data=train.df)
+t_c <- lm(rocky5~rocky1+rocky2+rocky3,data=train.df)
+t_d <- lm(rocky5~rocky1+rocky2,data=train.df)
+t_e <- lm(rocky5~rocky1+isMissing2+isMissing3+isMissing4,data=train.df)
+t_f <- lm(rocky5~rocky1+rocky2*isMissing2+rocky3+rocky4,data=train.df)
+t_g <- lm(rocky5~rocky1+rocky2+rocky3*isMissing3+rocky4,data=train.df)
+t_h <- lm(rocky5~rocky1+rocky2+rocky3+rocky4*isMissing4,data=train.df)
+t_i <- lm(rocky5~rocky1+rocky2*isMissing2+rocky3*isMissing3+rocky4,data=train.df)
+t_j <- lm(rocky5~rocky1+rocky2&isMissing2+rocky3+rocky4*isMissing4,data=train.df)
+t_k <- lm(rocky5~rocky1+rocky2+rocky3+rocky4,data=train.df)
+t_l <- lm(rocky5~rocky1+rocky2*rocky3+rocky4,data=train.df)
+t_m <- lm(rocky5~rocky1+rocky2+rocky3*rocky4,data=train.df)
+t_n <- lm(log(rocky5)~rocky1+rocky2+rocky3+rocky4,data=train.df)
+t_o <- lm(log(rocky5)~log(rocky1)+rocky2+rocky3+rocky4,data=train.df)
+t_p <- lm(rocky5~rocky1^2+rocky2*isMissing2+rocky3+rocky4,data=train.df)
+t_q <- lm(rocky5~rocky1^2+rocky2*isMissing2+rocky3*isMissing3+rocky4,data=train.df)
+t_r <- lm(rocky5~rocky1+rocky2*rocky3+rocky4*isMissing4,data=train.df)
+t_s <- lm(rocky5~isMissing2+isMissing3+isMissing4,data=train.df)
+t_t <- lm(rocky5~rocky1+rocky2+rocky3*isMissing3,data=train.df)
+
+
+p_a<- predict(t_a,newdata = valid.df)
+p_b<- predict(t_b,newdata = valid.df)
+p_c<- predict(t_c,newdata = valid.df)
+p_d<- predict(t_d,newdata = valid.df)
+p_e<- predict(t_e,newdata = valid.df)
+p_f<- predict(t_f,newdata = valid.df)
+p_g<- predict(t_g,newdata = valid.df)
+p_h<- predict(t_h,newdata = valid.df)
+p_i<- predict(t_i,newdata = valid.df)
+p_j<- predict(t_j,newdata = valid.df)
+p_k<- predict(t_k,newdata = valid.df)
+p_l<- predict(t_l,newdata = valid.df)
+p_m<- predict(t_m,newdata = valid.df)
+p_n<- predict(t_n,newdata = valid.df)
+p_o<- predict(t_o,newdata = valid.df)
+p_p<- predict(t_p,newdata = valid.df)
+p_q<- predict(t_q,newdata = valid.df)
+p_r<- predict(t_r,newdata = valid.df)
+p_s<- predict(t_s,newdata = valid.df)
+p_t<- predict(t_t,newdata = valid.df)
+
+
+oos_a <- (mean(valid.df$rocky5-p_a))^2
+oos_b <- (mean(valid.df$rocky5-p_b))^2
+oos_c <- (mean(valid.df$rocky5-p_c))^2
+oos_d <- (mean(valid.df$rocky5-p_d))^2
+oos_e <- (mean(valid.df$rocky5-p_e))^2
+oos_f <- (mean(valid.df$rocky5-p_f))^2
+oos_g <- (mean(valid.df$rocky5-p_g))^2
+oos_h <- (mean(valid.df$rocky5-p_h))^2
+oos_i <- (mean(valid.df$rocky5-p_i))^2
+oos_j <- (mean(valid.df$rocky5-p_j))^2
+oos_k <- (mean(valid.df$rocky5-p_k))^2
+oos_l <- (mean(valid.df$rocky5-p_l))^2
+oos_m <- (mean(valid.df$rocky5-p_m))^2
+oos_n <- (mean(valid.df$rocky5-p_n))^2
+oos_o <- (mean(valid.df$rocky5-p_o))^2
+oos_p <- (mean(valid.df$rocky5-p_p))^2
+oos_q <- (mean(valid.df$rocky5-p_q))^2
+oos_r <- (mean(valid.df$rocky5-p_r))^2
+oos_s <- (mean(valid.df$rocky5-p_s))^2
+oos_t <- (mean(valid.df$rocky5-p_t))^2
+
+row_name<- c(letters[1:20])
+col <- c(oos_a,oos_b,oos_c,oos_d,oos_e,oos_f,oos_g,oos_h,oos_i,oos_j,oos_k,oos_l,oos_m,oos_n,oos_o,oos_p,oos_q,oos_r,oos_s,oos_t)
+
+table <- matrix(col,ncol=1,byrow=TRUE)
+rownames(table) <- row_name
+table <-as.data.frame(table)
+
+print(table)
+
+
 ```
 
 f) Find the model performs best in terms of out-of-sample MSE, and present the model in the document, and discuss the results. (5 marks)
 ```{r}
+min(table$V1)
+#this is from model m 
+
+summary(t_m)
 ```
+The result for model m, which the formula is rocky5 ~ rocky1 + rocky2 + rocky3 * rocky4, the results shows that most of input variables are at the absolute level of significances. The adjusted r-squared rate is 0.3831, which is at the similar level with the orignial linear model. As this model considers the interaction between rocky3 and rocky4, we can observe that people who watch rocky3 have less influence on overall rocky 5 ratings. But the audience who watch rocky4 and give good ratings on 4 may gave good ratings on rocky5.  
